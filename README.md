@@ -51,7 +51,7 @@ goginit init
 - **`chi`**: For the Chi framework
 - **`mux`**: For the Mux framework
 - **`gorf`**: For the GoFr framework
-- **`default`**: For the native `net/http` with a simple mux
+- **`default`**: For the native `net/http`
 
 ## Future Updates 🔮
 

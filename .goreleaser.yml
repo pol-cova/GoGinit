@@ -1,3 +1,4 @@
+# .goreleaser.yml
 builds:
   - binary: goginit
     goos:
@@ -5,8 +6,8 @@ builds:
       - darwin
       - windows
     goarch:
-        - amd64
-        - arm64
+      - amd64
+      - arm64
     env:
       - CGO_ENABLED=0
     flags:
@@ -19,16 +20,15 @@ universal_binaries:
   - replace: true
 
 brews:
-  - name: goginit
+  -
+    name: goginit
     homepage: https://github.com/pol-cova/goginit
     tap:
       owner: pol-cova
       name: homebrew-goginit
     commit_author:
-        name: Paul Contreras
-        email: polc394@gmail.com
+      name: Paul Contreras
+      email: polc394@gmail.com
 
 checksum:
-    name_template: 'checksums.txt'
-
-
+  name_template: 'checksums.txt'

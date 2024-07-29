@@ -75,12 +75,12 @@ func createProjectSkeleton(projectName, framework string) {
 
 	// Create empty files with comments
 	files := map[string]string{
-		filepath.Join(projectName, "internal", "handlers", "handlers.go"):     "// handlers package",
-		filepath.Join(projectName, "internal", "middleware", "middleware.go"): "// middleware package",
-		filepath.Join(projectName, "internal", "routes", "routes.go"):         "// routes package",
-		filepath.Join(projectName, "pkg", "models", "models.go"):              "// models package",
-		filepath.Join(projectName, "pkg", "db", "db.go"):                      "// db package",
-		filepath.Join(projectName, "pkg", "utils", "utils.go"):                "// utils package",
+		filepath.Join(projectName, "internal", "handlers", "handlers.go"):     "// handlers package\npackage handlers",
+		filepath.Join(projectName, "internal", "middleware", "middleware.go"): "// middleware package\npackage middleware",
+		filepath.Join(projectName, "internal", "routes", "routes.go"):         "// routes package\npackage routes",
+		filepath.Join(projectName, "pkg", "models", "models.go"):              "// models package\npackage models",
+		filepath.Join(projectName, "pkg", "db", "db.go"):                      "// db package\npackage db",
+		filepath.Join(projectName, "pkg", "utils", "utils.go"):                "// utils package\npackage utils",
 	}
 
 	for path, content := range files {

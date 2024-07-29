@@ -46,7 +46,12 @@ goginit init
 
 - **`echo`**: For the Echo framework
 - **`gin`**: For the Gin framework
-- **`mux`**: For the native `net/http` with a simple mux
+- **`fiber`**: For the Fiber framework
+- **`martini`**: For the Martini framework
+- **`chi`**: For the Chi framework
+- **`mux`**: For the Mux framework
+- **`gorf`**: For the GoFr framework
+- **`default`**: For the native `net/http` with a simple mux
 
 ## Future Updates 🔮
 

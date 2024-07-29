@@ -1,9 +1,12 @@
+# .github/workflows/release.yml
 name: goreleaser
 
 on:
+  pull_request:
   push:
+    # run only against tags
     tags:
-      - '*'
+      - "*"
 
 permissions:
   contents: write
@@ -30,7 +33,9 @@ jobs:
           # either 'goreleaser' (default) or 'goreleaser-pro'
           distribution: goreleaser
           # 'latest', 'nightly', or a semver
-          version: ${{ env.GITHUB_REF_NAME }}
+          version: "latest"
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLISHER_TOKEN }}
+          # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
+          # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}

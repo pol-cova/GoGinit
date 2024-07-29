@@ -23,7 +23,7 @@ brews:
   -
     name: goginit
     homepage: https://github.com/pol-cova/goginit
-    tap:
+    repository:
       owner: pol-cova
       name: homebrew-goginit
     commit_author:

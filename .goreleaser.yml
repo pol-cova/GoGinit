@@ -1,0 +1,32 @@
+builds:
+  - binary: goginit
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+        - amd64
+        - arm64
+    env:
+      - CGO_ENABLED=0
+
+release:
+  prerelease: auto
+
+universal_binaries:
+  - replace: true
+
+brews:
+  - name: goginit
+    homepage: https://github.com/pol-cova/goginit
+    tap:
+      owner: pol-cova
+      name: homebrew-goginit
+    commit_author:
+        name: Paul Contreras
+        email: polc394@gmail.com
+
+checksum:
+    name_template: 'checksums.txt'
+
+

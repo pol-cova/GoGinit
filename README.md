@@ -1,7 +1,3 @@
-Here's the updated and attractive `README.md` for GoGinit:
-
----
-
 # GoGinit 🚀
 
 **GoGinit** is a CLI tool for initializing Go backend projects with ease. Perfect for kickstarting your Go projects with structured templates and framework options!

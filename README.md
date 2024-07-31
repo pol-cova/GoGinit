@@ -50,7 +50,7 @@ goginit init
 - **`martini`**: For the Martini framework
 - **`chi`**: For the Chi framework
 - **`mux`**: For the Mux framework
-- **`gorf`**: For the GoFr framework
+- **`GoFr`**: For the GoFr framework
 - **`default`**: For the native `net/http`
 
 ## Future Updates 🔮

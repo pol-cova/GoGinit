@@ -15,7 +15,7 @@
 1. **Tap the Homebrew repository:**
 
    ```sh
-   brew tap pol-cova/homebrew-goginit
+   brew tap pol-cova/goginit
    ```
 
 2. **Install GoGinit:**

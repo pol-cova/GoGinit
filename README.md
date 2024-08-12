@@ -5,8 +5,10 @@
 ## Features 🌟
 
 - **Seamless Initialization**: Set up a new Go project in no time.
-- **Framework Options**: Choose between Echo, Gin, or native `net/http`.
+- **Framework Options**: Choose between Echo, Gin, Fiber, Fuego, or other supported frameworks.
 - **Customizable**: Optionally include configuration files and setup scripts.
+- **SQLite Database Setup**: Initialize a SQLite database with your project.
+- **Start Command**: Easily run your Go project with a single command.
 
 ## Installation 🛠️
 
@@ -36,17 +38,33 @@
 
 ## Usage 🎉
 
+### Initialize a New Project
+
 To initialize a new Go project, run:
 
 ```sh
-goginit init
+goginit init 
 ```
+
+
+### Start the Project
+
+To run the main.go file located in `cmd/projectName/main.go`, use:
+
+```sh
+goginit start <projectName>
+```
+
+**Options:**
+
+- **`<project-name>`**: Name of the project (required).
 
 ### Framework Options
 
 - **`echo`**: For the Echo framework
 - **`gin`**: For the Gin framework
 - **`fiber`**: For the Fiber framework
+- **`fuego`**: For the Fuego framework
 - **`martini`**: For the Martini framework
 - **`chi`**: For the Chi framework
 - **`mux`**: For the Mux framework
@@ -55,7 +73,7 @@ goginit init
 
 ## Future Updates 🔮
 
-- **Full Database Setup**: Next updates will include a complete database initialization configuration.
+- **Optimization**: Upcoming updates will focus on optimizing performance and improving overall efficiency.
 
 ## Contribution Guidelines 🤝
 

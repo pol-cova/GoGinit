@@ -2,12 +2,15 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/pol-cova/GoGinit/internal/tui"
+	"github.com/pol-cova/GoGinit/internal/db"
 	"github.com/pol-cova/GoGinit/templates"
-	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/pol-cova/GoGinit/config"
+	"github.com/pol-cova/GoGinit/internal/tui"
+	"github.com/spf13/cobra"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -25,6 +28,7 @@ func Execute() error {
 
 func init() {
 	rootCmd.AddCommand(initCmd)
+	rootCmd.AddCommand(startCmd)
 }
 
 var initCmd = &cobra.Command{
@@ -34,27 +38,49 @@ var initCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// Banner
 		fmt.Println(`
-		
-  _________  ______      _ __ 
- / ___/ __ \/ ___(_)__  (_) /_
-/ (_ / /_/ / (_ / / _ \/ / __/
-\___/\____/\___/_/_//_/_/\__/ 
-                              
-
+   ____              ____   _           _   _   
+  / ___|   ___      / ___| (_)  _ __   (_) | |_ 
+ | |  _   / _ \    | |  _  | | | '_ \  | | | __|
+ | |_| | | (_) |   | |_| | | | | | | | | | | |_ 
+  \____|  \___/     \____| |_| |_| |_| |_|  \__|
 			`)
 		fmt.Println("Welcome to GoGinit! Let's initialize a new Go project.")
-		// Version
-		fmt.Println("version: 0.1.0")
-		projectName, framework := tui.GetUserInput()
+
+		// Call the TUI to get user input
+		projectName, framework, setupDB := tui.GetUserInput()
 		if projectName == "" || framework == "" {
 			fmt.Println("Project name or framework not selected.")
 			return
 		}
-		createProjectSkeleton(projectName, framework)
+		// Create the project skeleton and handle any additional setup
+		createProjectSkeleton(projectName, framework, setupDB)
 	},
 }
 
-func createProjectSkeleton(projectName, framework string) {
+var startCmd = &cobra.Command{
+	Use:   "start [projectName]",
+	Short: "Start the backend server",
+	Long:  `This command will run the main.go file located in cmd/projectName/main.go`,
+	Args:  cobra.ExactArgs(1), // Ensure exactly one argument is provided
+	Run: func(cmd *cobra.Command, args []string) {
+		projectName := args[0] // Get the project name from arguments
+		runMain(projectName)
+	},
+}
+
+func runMain(projectName string) {
+	mainPath := filepath.Join("cmd", projectName, "main.go")
+	cmd := exec.Command("go", "run", mainPath)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	fmt.Printf("Running server: %s\n", mainPath)
+	if err := cmd.Run(); err != nil {
+		fmt.Printf("Failed to run server: %v\n", err)
+	}
+}
+
+func createProjectSkeleton(projectName, framework string, setupDB bool) {
 	// Create the necessary directories
 	dirs := []string{
 		filepath.Join(projectName, "cmd", projectName),
@@ -63,7 +89,6 @@ func createProjectSkeleton(projectName, framework string) {
 		filepath.Join(projectName, "internal", "routes"),
 		filepath.Join(projectName, "pkg", "models"),
 		filepath.Join(projectName, "pkg", "db"),
-		filepath.Join(projectName, "pkg", "utils"),
 	}
 
 	for _, dir := range dirs {
@@ -79,8 +104,11 @@ func createProjectSkeleton(projectName, framework string) {
 		filepath.Join(projectName, "internal", "middleware", "middleware.go"): "// middleware package\npackage middleware",
 		filepath.Join(projectName, "internal", "routes", "routes.go"):         "// routes package\npackage routes",
 		filepath.Join(projectName, "pkg", "models", "models.go"):              "// models package\npackage models",
-		filepath.Join(projectName, "pkg", "db", "db.go"):                      "// db package\npackage db",
-		filepath.Join(projectName, "pkg", "utils", "utils.go"):                "// utils package\npackage utils",
+	}
+
+	// Conditionally add the db.go file
+	if setupDB {
+		files[filepath.Join(projectName, "pkg", "db", "db.go")] = "// db package\npackage db"
 	}
 
 	for path, content := range files {
@@ -91,42 +119,47 @@ func createProjectSkeleton(projectName, framework string) {
 	}
 
 	// Initialize Go module
-	cmd := exec.Command("go", "mod", "init", projectName)
-	cmd.Dir = projectName
-	if err := cmd.Run(); err != nil {
-		fmt.Println("Error initializing Go module:", err)
+	if err := config.GenerateGoMod(projectName); err != nil {
+		fmt.Println("Error generating go.mod file:", err)
+		return
+	}
+
+	frameworkConfig, err := config.GetFrameworkConfig(framework)
+	if err != nil {
+		fmt.Println("Error getting framework configuration:", err)
+		return
+	}
+
+	if err := config.FetchFrameworkDependencies(projectName, frameworkConfig.Name); err != nil {
+		fmt.Println("Error getting framework dependencies:", err)
 		return
 	}
 
 	var mainFileContent string
-	var getDependenciesCmd *exec.Cmd
 
-	// Select the appropriate template and dependency command
+	// Select the appropriate template
 	switch framework {
 	case "echo":
 		mainFileContent = templates.EchoTemplate
-		getDependenciesCmd = exec.Command("go", "get", "github.com/labstack/echo/v4")
 	case "gin":
 		mainFileContent = templates.GinTemplate
-		getDependenciesCmd = exec.Command("go", "get", "github.com/gin-gonic/gin")
 	case "fiber":
 		mainFileContent = templates.FiberTemplate
-		getDependenciesCmd = exec.Command("go", "get", "github.com/gofiber/fiber/v3")
 	case "martini":
 		mainFileContent = templates.MartiniTemplate
-		getDependenciesCmd = exec.Command("go", "get", "github.com/go-martini/martini")
 	case "chi":
 		mainFileContent = templates.ChiTemplate
-		getDependenciesCmd = exec.Command("go", "get", "github.com/go-chi/chi/v5")
 	case "mux":
 		mainFileContent = templates.MuxTemplate
-		getDependenciesCmd = exec.Command("go", "get", "github.com/gorilla/mux")
 	case "gofr":
 		mainFileContent = templates.GoFrTemplate
-		getDependenciesCmd = exec.Command("go", "get", "github.com/gofr-dev/gofr")
-
-	default:
+	case "fuego":
+		mainFileContent = templates.FuegoTemplate
+	case "default":
 		mainFileContent = templates.DefaultTemplate
+	default:
+		fmt.Println("Invalid framework selected.")
+		return
 	}
 
 	// Create the main.go file in the appropriate directory
@@ -136,14 +169,10 @@ func createProjectSkeleton(projectName, framework string) {
 		return
 	}
 
-	// Download the dependencies if required
-	if getDependenciesCmd != nil {
-		getDependenciesCmd.Dir = projectName
-		if err := getDependenciesCmd.Run(); err != nil {
-			fmt.Println("Error downloading dependencies:", err)
-			return
-		}
+	// Setup the database if required
+	if setupDB {
+		db.SetupDatabase(projectName, setupDB)
 	}
 
-	fmt.Println("Project initialized successfully!")
+	fmt.Println("Project created successfully, Happy Coding! 🎉")
 }

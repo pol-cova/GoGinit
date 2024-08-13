@@ -69,6 +69,7 @@ goginit start <projectName>
 - **`chi`**: For the Chi framework
 - **`mux`**: For the Mux framework
 - **`GoFr`**: For the GoFr framework
+- **`Fuego`**: For the Fuego framework
 - **`default`**: For the native `net/http`
 
 ## Future Updates 🔮

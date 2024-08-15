@@ -100,14 +100,5 @@ func FetchFrameworkDependencies(moduleName, framework string) error {
 	if err != nil {
 		return fmt.Errorf("error fetching framework dependencies: %v, Output: %s", err, output)
 	}
-
-	// Remove unnecessary dependencies
-	cmd = exec.Command("go", "mod", "tidy")
-	cmd.Dir = moduleName
-	output, err = cmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("error running go mod tidy: %v, Output: %s", err, output)
-	}
-
 	return nil
 }

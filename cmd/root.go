@@ -29,6 +29,7 @@ func Execute() error {
 func init() {
 	rootCmd.AddCommand(initCmd)
 	rootCmd.AddCommand(startCmd)
+	rootCmd.AddCommand(cleanCmd)
 }
 
 var initCmd = &cobra.Command{
@@ -57,6 +58,7 @@ var initCmd = &cobra.Command{
 	},
 }
 
+// Start dev server command
 var startCmd = &cobra.Command{
 	Use:   "start [projectName]",
 	Short: "Start the backend server",
@@ -77,6 +79,27 @@ func runMain(projectName string) {
 	fmt.Printf("Running server: %s\n", mainPath)
 	if err := cmd.Run(); err != nil {
 		fmt.Printf("Failed to run server: %v\n", err)
+	}
+}
+
+// Clean Dependencies command
+var cleanCmd = &cobra.Command{
+	Use:   "clean",
+	Short: "Clean up the project dependencies",
+	Long:  `This command will clean up the project dependencies by running go mod tidy.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		cleanDependencies()
+	},
+}
+
+func cleanDependencies() {
+	cmd := exec.Command("go", "mod", "tidy")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	fmt.Println("Cleaning up dependencies...")
+	if err := cmd.Run(); err != nil {
+		fmt.Printf("Failed to clean up dependencies: %v\n", err)
 	}
 }
 
@@ -129,11 +152,13 @@ func createProjectSkeleton(projectName, framework string, setupDB bool) {
 		fmt.Println("Error getting framework configuration:", err)
 		return
 	}
+	fmt.Println("Successfully retrieved framework configuration:", frameworkConfig.Name)
 
 	if err := config.FetchFrameworkDependencies(projectName, frameworkConfig.Name); err != nil {
 		fmt.Println("Error getting framework dependencies:", err)
 		return
 	}
+	fmt.Println("Successfully fetched framework dependencies for:", frameworkConfig.Name)
 
 	var mainFileContent string
 

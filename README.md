@@ -9,6 +9,7 @@
 - **Customizable**: Optionally include configuration files and setup scripts.
 - **SQLite Database Setup**: Initialize a SQLite database with your project.
 - **Start Command**: Easily run your Go project with a single command.
+- **Clean Command**: Remove unused libraries in the mod file.
 
 ## Installation 🛠️
 
@@ -52,12 +53,21 @@ goginit init
 To run the main.go file located in `cmd/projectName/main.go`, use:
 
 ```sh
+cd <projectName>
 goginit start <projectName>
 ```
 
 **Options:**
 
 - **`<project-name>`**: Name of the project (required).
+
+### Clean the Mod
+To clean the mod file use:
+    
+```sh
+   cd <projectName>
+   goginit clean
+```
 
 ### Framework Options
 
@@ -75,6 +85,8 @@ goginit start <projectName>
 ## Future Updates 🔮
 
 - **Optimization**: Upcoming updates will focus on optimizing performance and improving overall efficiency.
+- **Test**: Implementing test options for your backend using the CLI tool.
+- **Benchmarking**: Adding benchmarking options to the CLI tool.
 
 ## Contribution Guidelines 🤝
 

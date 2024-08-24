@@ -24,12 +24,6 @@ func installGoPackage(pkg string, projectDir string) {
 		log.Fatalf("\nFailed to install package %s: %v", pkg, err)
 	}
 
-	// Run `go mod tidy` to clean up go.mod and go.sum
-	cmd = exec.Command("go", "mod", "tidy")
-	cmd.Dir = projectDir
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
 	if err := cmd.Run(); err != nil {
 		log.Fatalf("\nFailed to tidy go.mod: %v", err)
 	}
